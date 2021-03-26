@@ -10,7 +10,7 @@
 AutoCompleteClient::AutoCompleteClient(std::string host, std::string port)
   : m_host(std::move(host)), m_port(std::move(port)) {}
 
-nlohmann::json AutoCompleteClient::sendRequest([[maybe_unused]] std::string_view username,
+nlohmann::json AutoCompleteClient::sendRequest(std::string_view username,
                                                std::string_view request) {
   boost::asio::io_context ioc{};
 
@@ -24,7 +24,7 @@ nlohmann::json AutoCompleteClient::sendRequest([[maybe_unused]] std::string_view
   boost::beast::http::request<boost::beast::http::string_body> req{
       boost::beast::http::verb::post, "/v1/api/suggest", 11};
   req.set(boost::beast::http::field::host, m_host);
-  req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+  req.set(boost::beast::http::field::user_agent, username);
   req.set(boost::beast::http::field::content_type, "application/json");
   req.body() = R"({"input": ")" + std::string(request) + R"("})";
   req.prepare_payload();
@@ -39,8 +39,9 @@ nlohmann::json AutoCompleteClient::sendRequest([[maybe_unused]] std::string_view
   boost::beast::error_code ec;
   stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 
-  if(ec && ec != boost::beast::errc::not_connected)
+  if (ec && ec != boost::beast::errc::not_connected) {
     throw boost::beast::system_error{ec};
+  }
 
   return nlohmann::json::parse(res.body());
 }

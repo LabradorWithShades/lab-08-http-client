@@ -7,6 +7,9 @@
 #include <nlohmann/json.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
+#include <string>
+#include <string_view>
+
 class AutoCompleteClient {
  public:
   AutoCompleteClient(std::string host, std::string port);

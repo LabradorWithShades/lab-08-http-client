@@ -9,7 +9,9 @@
 int main(int argc, char* argv[]) {
   if (argc != 3) {
     std::cerr << "Error! Usage: " << std::endl
-              << "     demo <hostname> <port>" << std::endl;
+              << "     demo <hostname> <port>" << std::endl
+              << "Example:" << std::endl
+              << "     demo localhost 3000" << std::endl;
     return 1;
   }
   AutoCompleteClient client(argv[1], argv[2]);
